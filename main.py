@@ -150,14 +150,12 @@ vk = vk_session.get_api()
 
 feed = Feed(vk, config)
 bot = Bot(TG_TOKEN)
-message = str(feed)
-if message:
-    try:
-        bot.send_message(CHANNEL, message, ParseMode.HTML, disable_web_page_preview=True)
-    except BadRequest:
-        message = message.split(DELIMITER)
-        mid = len(message) // 2
-        bot.send_message(CHANNEL, DELIMITER.join(message[:mid]), ParseMode.HTML, disable_web_page_preview=True)
-        bot.send_message(CHANNEL, DELIMITER.join(message[mid:]), ParseMode.HTML, disable_web_page_preview=True)
+message = str(feed).split(DELIMITER)
+while message:
+    part = message.pop(0)
+    while message and len(part) + len(message[0]) < 4096:
+        part += DELIMITER + message.pop(0)
+    # bot.send_message(CHANNEL, part, ParseMode.HTML, disable_web_page_preview=True)
+    print(len(part))
 with open('last', 'wt') as f:
     f.write(str(int(mktime(NOW.timetuple()))))
