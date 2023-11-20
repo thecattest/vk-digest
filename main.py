@@ -27,7 +27,12 @@ try:
         LAST = int(f.readline().strip())
         LAST = datetime.fromtimestamp(LAST)
 except FileNotFoundError:
-    LAST = NOW - timedelta(days=1)
+    LAST = 0
+
+LAST = max(LAST, NOW - timedelta(days=1))
+
+with open('last', 'wt') as f:
+    f.write(str(int(mktime(NOW.timetuple()))))
 
 config = [{'title': 'СИЦ ИММиКН', 'domain': 'sic_mmcs', 'owner_id': -142132054},
           {'title': 'Южный федеральный университет (ЮФУ)', 'domain': 'sfedu_official', 'owner_id': -47535294},
@@ -168,5 +173,3 @@ while message:
     while message and len(part + message[0] + DELIMITER) < 4096:
         part += DELIMITER + message.pop(0)
     bot.send_message(CHANNEL, part, ParseMode.HTML, disable_web_page_preview=True)
-with open('last', 'wt') as f:
-    f.write(str(int(mktime(NOW.timetuple()))))
